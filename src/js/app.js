@@ -93,24 +93,32 @@ App = {
 
     var adoptionInstance;
 
-    web3.eth.getAccounts(function(error, accounts) {
-      if (error) {
-        console.log(error);
+    contract = new web3.eth.Contract(abi, address);
+    
+    // Don't forget to use await and .call()
+    owner = contract.methods.ownerOf(tokenId).call().then(){
+      if (owner == accounts[0]){ 
+        console.log("NFT owner, access allowed")
+        web3.eth.getAccounts(function(error, accounts) {
+          if (error) {
+            console.log(error);
+          }
+
+          var account = accounts[0];
+
+          App.contracts.Adoption.deployed().then(function(instance) {
+            adoptionInstance = instance;
+
+            // Execute adopt as a transaction by sending account
+            return adoptionInstance.adopt(petId, {from: account});
+          }).then(function(result) {
+            return App.markAdopted();
+          }).catch(function(err) {
+            console.log(err.message);
+          });
+        });
       }
-
-      var account = accounts[0];
-
-      App.contracts.Adoption.deployed().then(function(instance) {
-        adoptionInstance = instance;
-
-        // Execute adopt as a transaction by sending account
-        return adoptionInstance.adopt(petId, {from: account});
-      }).then(function(result) {
-        return App.markAdopted();
-      }).catch(function(err) {
-        console.log(err.message);
-      });
-    });
+    }
   }
 
 };
