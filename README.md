@@ -25,9 +25,6 @@ undefined
 truffle(develop)> accounts[0]
 '0x19D6AEc851d8853a04C9F9738201652eAe91A734'
 
-
-
-    Next: 
-
-      2. Validate ownership on app.js, if NFT owned allow adoption on pet shop. Create test for NFT ownership validation.
 3. TODO: Update NFT storage to be located on IPFs
+4. TODO: Validate ownership on app.js, if NFT owned allow adoption on pet shop. Create test for NFT ownership validation.
+
