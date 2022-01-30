@@ -40,6 +40,7 @@ truffle(develop)> accounts[0]
    Thoughts: Astrocats single page with ability to create and mint NFTs. This page contains projects roadmap.
    Initial NFT drop to some wallets during contract deployment 
    Separate page for HunterGame
+   Storage: Pinata service https://app.pinata.cloud/pinmanager
    Tip: By deleting the path of IPF the address can be reduced, reducing the cost of storing the data in Ethereum.
 
 4. TODO: Access control mechanisms for contracts.
