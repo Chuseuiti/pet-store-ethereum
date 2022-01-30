@@ -46,6 +46,6 @@ truffle(develop)> accounts[0]
 
 5. TODO: Sell a minted NFT on OpenSea.
 
-5. TODO: Validate ownership on app.js, if NFT owned allow adoption on pet shop. Create test for NFT ownership validation.
+6. TODO: Validate ownership on app.js, if NFT owned allow adoption on pet shop. Create test for NFT ownership validation.
 
-6. TODO: Upgradable contracts: https://docs.openzeppelin.com/contracts/3.x/upgradeable
+7. TODO: Upgradable contracts: https://docs.openzeppelin.com/contracts/3.x/upgradeable
