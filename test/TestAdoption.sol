@@ -1,8 +1,9 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/Adoption.sol";
+//import "../contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 
 contract TestAdoption {
   // The address of the adoption contract to be tested
@@ -34,6 +35,32 @@ contract TestAdoption {
     address[16] memory adopters = adoption.getAdopters();
 
     Assert.equal(adopters[expectedPetId], expectedAdopter, "Owner of the expected pet should be this contract");
+  }
+
+}
+
+contract TestERC721 {
+  // The address of the adoption contract to be tested
+  ERC721PresetMinterPauserAutoId nft = ERC721PresetMinterPauserAutoId(DeployedAddresses.ERC721PresetMinterPauserAutoId());
+
+  // Token symbol
+  uint expecedSymbol = 'NFT';
+
+  // Testing the symbol() function
+  function testSymbol() public {
+    returnedSymbol = nft.symbol();
+
+    Assert.equal(returnedSymbol, expecedSymbol, "Symbol expected should match what is returned.");
+  }
+
+  // The expected owner of the initial NFT token contract
+  address expectedOwner = address(this);
+
+  // Testing retrieval of tokenId 0's owner
+  function testGetAdopterAddressByTokenId() public {
+    address owner = nft.ownerOf(0);
+
+    Assert.equal(owner, expectedOwner, "Owner of the expected NFT should be this contract");
   }
 
 }
