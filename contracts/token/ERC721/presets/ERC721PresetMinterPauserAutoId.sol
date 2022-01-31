@@ -63,6 +63,10 @@ contract ERC721PresetMinterPauserAutoId is
         _mint(_msgSender(), _tokenIdTracker.current());
     }
 
+    function getLatestTokenId() public returns (uint256 latestTokenId){
+        return _tokenIdTracker.current();
+    }
+
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseTokenURI;
     }

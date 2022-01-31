@@ -390,7 +390,7 @@
         87
       ],
       "IERC165": [
-        1624
+        1976
       ],
       "IERC20": [
         1008
@@ -443,7 +443,7 @@
               "id": 13,
               "name": "IERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1624,
+              "referencedDeclaration": 1976,
               "src": "187:7:3"
             },
             "id": 14,
@@ -471,7 +471,7 @@
         "linearizedBaseContracts": [
           87,
           1008,
-          1624
+          1976
         ],
         "name": "IERC1363",
         "nameLocation": "175:8:3",
@@ -1331,7 +1331,7 @@
         87
       ],
       "IERC165": [
-        1624
+        1976
       ],
       "IERC20": [
         1008
@@ -1384,7 +1384,7 @@
               "id": 13,
               "name": "IERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1624,
+              "referencedDeclaration": 1976,
               "src": "187:7:3"
             },
             "id": 14,
@@ -1412,7 +1412,7 @@
         "linearizedBaseContracts": [
           87,
           1008,
-          1624
+          1976
         ],
         "name": "IERC1363",
         "nameLocation": "175:8:3",
@@ -2271,7 +2271,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-23T19:32:46.856Z",
+  "updatedAt": "2022-01-31T01:19:11.516Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

@@ -50,3 +50,17 @@ truffle(develop)> accounts[0]
 6. TODO: Validate ownership on app.js, if NFT owned allow adoption on pet shop. Create test for NFT ownership validation.
 
 7. TODO: Upgradable contracts: https://docs.openzeppelin.com/contracts/3.x/upgradeable
+
+Current pages
+=============
+
+Page 1: 
+  Minting on IPFS and pre-minting several NFTs.
+  Fetch and display all already minted NFTs from IPFS.
+
+Page 2: 
+  Review NFT ownership, if owner allow access. 
+  Provide option of testing a video game.
+
+
+End: Gamify house/business development DAO. Connecting owners to their metaverse properties and management of them. With NFT arts purchable on the walls.

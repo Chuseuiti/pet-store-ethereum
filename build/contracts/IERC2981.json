@@ -64,7 +64,7 @@
     "absolutePath": "project:/contracts/interfaces/IERC2981.sol",
     "exportedSymbols": {
       "IERC165": [
-        1624
+        1976
       ],
       "IERC2981": [
         121
@@ -105,7 +105,7 @@
               "id": 107,
               "name": "IERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1624,
+              "referencedDeclaration": 1976,
               "src": "219:7:9"
             },
             "id": 108,
@@ -126,7 +126,7 @@
         "id": 121,
         "linearizedBaseContracts": [
           121,
-          1624
+          1976
         ],
         "name": "IERC2981",
         "nameLocation": "207:8:9",
@@ -288,7 +288,7 @@
     "absolutePath": "project:/contracts/interfaces/IERC2981.sol",
     "exportedSymbols": {
       "IERC165": [
-        1624
+        1976
       ],
       "IERC2981": [
         121
@@ -329,7 +329,7 @@
               "id": 107,
               "name": "IERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1624,
+              "referencedDeclaration": 1976,
               "src": "219:7:9"
             },
             "id": 108,
@@ -350,7 +350,7 @@
         "id": 121,
         "linearizedBaseContracts": [
           121,
-          1624
+          1976
         ],
         "name": "IERC2981",
         "nameLocation": "207:8:9",
@@ -514,7 +514,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-23T19:32:46.857Z",
+  "updatedAt": "2022-01-31T01:19:11.517Z",
   "devdoc": {
     "details": "Interface for the NFT Royalty Standard",
     "kind": "dev",

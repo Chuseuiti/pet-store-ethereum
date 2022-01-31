@@ -49,16 +49,16 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('Adoption.json', function(data) {
+    $.getJSON('ERC721PresetMinterPauserAutoId.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with @truffle/contract
-      var AdoptionArtifact = data;
-      App.contracts.Adoption = TruffleContract(AdoptionArtifact);
+      var NFTArtifact = data;
+      App.contracts.ERC721PresetMinterPauserAutoId = TruffleContract(NFTArtifact);
 
       // Set the provider for our contract
-      App.contracts.Adoption.setProvider(App.web3Provider);
+      App.contracts.ERC721PresetMinterPauserAutoId.setProvider(App.web3Provider);
 
       // Use our contract to retrieve and mark the adopted pets
-      return App.markAdopted();
+      return App.fetchAllNfts();
     });
 
     return App.bindEvents();
@@ -68,22 +68,154 @@ App = {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
   },
 
-  markAdopted: function() {
-    var adoptionInstance;
 
-    App.contracts.Adoption.deployed().then(function(instance) {
-      adoptionInstance = instance;
 
-      return adoptionInstance.getAdopters.call();
-    }).then(function(adopters) {
-      for (i = 0; i < adopters.length; i++) {
-        if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-          $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
+
+  // NFT creation on IPFS
+  createNFTFromAssetData: function(content, options) {
+        ipfs = ipfsClient(config.ipfsApiUrl)
+        // add the asset to IPFS
+        const filePath = options.path || 'asset.bin'
+        const basename =  path.basename(filePath)
+
+        // When you add an object to IPFS with a directory prefix in its path,
+        // IPFS will create a directory structure for you. This is nice, because
+        // it gives us URIs with descriptive filenames in them e.g.
+        // 'ipfs://QmaNZ2FCgvBPqnxtkbToVVbK2Nes6xk5K4Ns6BsmkPucAM/cat-pic.png' instead of
+        // 'ipfs://QmaNZ2FCgvBPqnxtkbToVVbK2Nes6xk5K4Ns6BsmkPucAM'
+        const ipfsPath = '/nft/' + basename
+        const { cid: assetCid } = await ipfs.add({ path: ipfsPath, content }, ipfsAddOptions)
+
+        // make the NFT metadata JSON
+        const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
+        const metadata = await makeNFTMetadata(assetURI, options)
+
+        // add the metadata to IPFS
+        const { cid: metadataCid } = await ipfs.add({ path: '/nft/metadata.json', content: JSON.stringify(metadata)}, ipfsAddOptions)
+        const metadataURI = ensureIpfsUriPrefix(metadataCid) + '/metadata.json'
+
+        // get the address of the token owner from options, or use the default signing address if no owner is given
+        let ownerAddress = options.owner
+        if (!ownerAddress) {
+            ownerAddress = await accounts[0]
         }
+
+        // mint a new token referencing the metadata URI
+        const tokenId = await mintToken(ownerAddress, metadataURI)
+
+        // format and return the results
+        return {
+            tokenId,
+            ownerAddress,
+            metadata,
+            assetURI,
+            metadataURI,
+            assetGatewayURL: makeGatewayURL(assetURI),
+            metadataGatewayURL: makeGatewayURL(metadataURI),
+        }
+  },
+
+  makeNFTMetadata: function (assetURI, options) {
+        const {name, description} = options;
+        assetURI = ensureIpfsUriPrefix(assetURI)
+        return {
+            name,
+            description,
+            image: assetURI
+        }
+  },
+
+  ensureIpfsUriPrefix: function (cidOrURI) {
+    let uri = cidOrURI.toString()
+    if (!uri.startsWith('ipfs://')) {
+        uri = 'ipfs://' + cidOrURI
+    }
+    // Avoid the Nyan Cat bug (https://github.com/ipfs/go-ipfs/pull/7930)
+    if (uri.startsWith('ipfs://ipfs/')) {
+      uri = uri.replace('ipfs://ipfs/', 'ipfs://')
+    }
+    return uri
+  },
+  mintToken: function(ownerAddress, metadataURI) {
+      var nftInstance;
+
+      // the smart contract adds an ipfs:// prefix to all URIs, so make sure it doesn't get added twice
+      metadataURI = stripIpfsUriPrefix(metadataURI)
+
+      nftInstance = await App.contracts.ERC721PresetMinterPauserAutoId.deployed()
+
+      const tx = await nftInstance.mintToken(ownerAddress, metadataURI)
+
+      // The OpenZeppelin base ERC721 contract emits a Transfer event when a token is issued.
+      // tx.wait() will wait until a block containing our transaction has been mined and confirmed.
+      // The transaction receipt contains events emitted while processing the transaction.
+      const receipt = await tx.wait()
+      for (const event of receipt.events) {
+          if (event.event !== 'Transfer') {
+              console.log('ignoring unknown event type ', event.event)
+              continue
+          }
+          return event.args.tokenId.toString()
       }
-    }).catch(function(err) {
-      console.log(err.message);
+
+      throw new Error('unable to get token id')
+
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Multicall fetch all NFT minted
+  fetchAllNfts: function() {
+    $.getJSON('Multicall.json', function(data) {
+      // Get the necessary contract artifact file and instantiate it with @truffle/contract
+      var MulticallArtifact = data;
+      App.contracts.Multicall = TruffleContract(MulticallArtifact);
+
+      // Set the provider for our contract
+      App.contracts.Multicall.setProvider(App.web3Provider);
+
+      var nftInstance;
+
+      App.contracts.ERC721PresetMinterPauserAutoId.deployed().then(function(instance) {
+        nftInstance = instance;
+
+        return nftInstance.getLatestTokenId.call();
+      }).then(function(tokenID) {
+
+        multicallArgs = []
+
+        // Prepare list to retrive all owners up to the latest tokenId
+        // All owners retrieved as multicall array with their NFTs
+        for (i = 0; i <= tokenID; i++) {
+          multicallArgs[i] = {
+            target: App.contracts.ERC721PresetMinterPauserAutoId,
+            callData: nftContract.methods["ownerOf"](i).encodeABI()
+          }
+        }
+     
+        // Retrive all owners, expecting multicall function in contract to be able to apply it
+        var ownersOf = await multicallContract.methods["aggregate"](multicallArgs).call();
+    
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+
+
     });
+
   },
 
   handleAdopt: function(event) {
